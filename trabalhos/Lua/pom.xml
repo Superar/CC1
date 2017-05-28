@@ -8,13 +8,22 @@
   <artifactId>Lua</artifactId>
   <version>1.0-SNAPSHOT</version>
 
+
+  <dependencies>
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>4.6</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
 
       <plugin>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-maven-plugin</artifactId>
-        <version>4.5</version>
+        <version>4.6</version>
         <executions>
           <execution>
             <goals>
