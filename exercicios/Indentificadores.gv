@@ -1,0 +1,17 @@
+digraph Identificador
+{
+
+  rankdir = LR;
+
+  /* Entities */
+  EstadoInicial [label="", shape=point, width=0];
+  Inicio [label="", shape=circle];
+  letra [label="", shape=circle];
+  Final [label="*", shape=doublecircle, xlabel="Identificador"];
+
+  /* Relationships */
+  EstadoInicial -> Inicio;
+  Inicio -> letra [label="a..z | A..Z"];
+  letra -> letra [label="a..Z | A..Z | 0..9"];
+  letra -> Final [label="outro"];
+}

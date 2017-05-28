@@ -1,0 +1,26 @@
+digraph NumReal {
+
+  rankdir = LR;
+
+  /* Entities */
+  EstadoInicial [label="", shape=point, width=0];
+  Inicio [label="", shape=circle];
+  sinal  [label="", shape=circle];
+  digito1 [label="", shape=circle];
+  ponto [label="", shape=circle];
+  digito2 [label="", shape=circle];
+  Final [label="*", shape=doublecircle, xlabel="NumReal"];
+
+  /* Relationships */
+  EstadoInicial -> Inicio;
+  Inicio -> sinal [label="+"];
+  Inicio -> sinal [label="-"];
+  sinal -> digito1 [label="0..9"];
+  Inicio -> digito1 [label="0..9"];
+  digito1 -> digito1 [label="0..9"];
+  digito1 -> ponto [label="."];
+  ponto -> digito2 [label="0..9"];
+  digito2 -> digito2 [label="0..9"];
+  digito2 -> Final [label="outro"];
+
+}

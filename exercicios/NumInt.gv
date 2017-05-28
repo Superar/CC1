@@ -1,0 +1,22 @@
+digraph NumInt
+{
+
+  rankdir = LR;
+
+  /* Entities */
+  EstadoInicial [label="", shape=point, width=0];
+  Inicio [label="", shape=circle];
+  sinal  [label="", shape=circle];
+  digito [label="", shape=circle];
+  Final [label="*", shape=doublecircle, xlabel="NumInt"];
+
+  /* Relationships */
+  EstadoInicial -> Inicio;
+  Inicio -> sinal [label="+"];
+  Inicio -> sinal [label="-"];
+  sinal -> digito [label="0..9"];
+  Inicio -> digito [label="0..9"];
+  digito -> digito [label="0..9"];
+  digito -> Final [label="outro"];
+
+}
