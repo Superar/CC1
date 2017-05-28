@@ -8,9 +8,9 @@ programa : Palavra_chave | Identificador;
 
 
 fragment Letra : ('a'..'z'|'A'..'Z');
-fragment Numero : ('0'..'9');
+fragment Digito : ('0'..'9');
 
-Identificador : Letra (Letra|Numero|'_')*;
+Identificador : (Letra|'_') (Letra|Digito|'_')*;
 
 Palavra_chave : 'and' | 'break' | 'do' | 'else' | 'elseif' |
                 'end' | 'false' | 'for' | 'function' | 'if' |
