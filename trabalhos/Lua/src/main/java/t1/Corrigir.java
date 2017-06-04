@@ -16,7 +16,7 @@ public class Corrigir {
 
     // Especifique o caminho dos casos de teste.
     // Deve haver dois subdiretorios: entrada e saida
-    private final static String CAMINHO_CASOS_TESTE = "../../resources";
+    private final static String CAMINHO_CASOS_TESTE = "./src/main/resources";
 
     // As flags GERA e VERIFICA são de uso do professor
     // GERA = true significa que a saída vai ser gerada, sobrescrevendo qualquer
