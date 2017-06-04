@@ -76,8 +76,16 @@ Palavra_chave : 'and'    | 'break'  | 'do'   | 'else'     | 'elseif' |
                 'repeat' | 'return' | 'then' | 'true'     | 'until'  |
                 'while';
 
-Operador_logico : 'and' | 'or' | 'not';
-
 Identificador : (Letra|'_') (Letra|Digito|'_')*;
 
-Cadeia : Identificador;
+fragment Decimal : ('.' (Digito)+);
+fragment Expoente : ( ('e' | 'E') ('-')? (Digito)+ );
+fragment Hexadecimal : ('0' 'x' (Digito | ('a'..'f'))+);
+Numero : ((Digito)+ (Decimal)? (Expoente)?) | Hexadecimal;
+
+fragment CadeiaBase : (~('\\' | '\n'))*;
+Cadeia : ('\'' CadeiaBase '\'') | ('"' CadeiaBase '"');
+
+fragment ComentarioCurto : '-' '-' (~('\n'))* '\n';
+fragment ComentarioLongo : '-' '-' '[' .*? ']';
+Comentario : ComentarioLongo | ComentarioCurto {skip();};
