@@ -35,8 +35,8 @@ listadenomes : Identificador (',' Identificador)*;
 
 listaexp : (exp ',')* exp;
 
-exp : 'nil' | 'false' | 'true' | Numero | Cadeia | '...' | funcao |
-      expprefixo | construtortabela | exp OpBinaria exp | OpUnaria exp;
+exp : 'nil' | 'false' | 'true' | Digito | Cadeia | '...' | funcao |
+      expprefixo | construtortabela | exp opbin exp | opunaria exp;
 
 expprefixo : var | chamadadefuncao | '(' exp ')';
 
@@ -52,9 +52,17 @@ listapar : listadenomes (',' '...')? | '...';
 
 construtortabela : '{' (listadecampos)? '}';
 
-listadecampos : campo (SeparadordeCampos campo)* (SeparadordeCampos)?;
+listadecampos : campo (separadordecampos campo)* (separadordecampos)?;
 
 campo : '[' exp ']' '=' exp | Identificador '=' exp | exp;
+
+separadordecampos : ',' | ';';
+
+opbin : '+' | '-' | '*' | '/' | '^' | '%' | '..' |
+        '<' | '<=' | '>' | '>=' | '==' | '~=' |
+        'and' | 'or';
+
+opunaria : '-' | 'not' | '#';
 
 
 /* Regras léxicas */
@@ -73,17 +81,3 @@ Operador_logico : 'and' | 'or' | 'not';
 Identificador : (Letra|'_') (Letra|Digito|'_')*;
 
 Cadeia : Identificador;
-
-fragment Decimal : ('.' (Digito)+);
-fragment Expoente : ( ('e' | 'E') ('-')? (Digito)+ );
-fragment Hexadecimal : ('0' 'x' (Digito | ('a'..'f'))+);
-
-Numero : ((Digito)+ (Decimal)? (Expoente)?) | Hexadecimal;
-
-OpUnaria : '-' | 'not' | '#';
-
-OpBinaria : '+' | '-' | '*' | '/' | '^' | '%' | '..' |
-            '<' | '<=' | '>' | '>=' | '==' | '~=' |
-            'and' | 'or';
-
-SeparadordeCampos : ',' | ';';
