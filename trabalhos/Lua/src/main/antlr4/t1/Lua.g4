@@ -1,19 +1,20 @@
 grammar Lua;
 
 @members {
-   public static String grupo="587265";
+   public static String grupo="587265_e_595071";
 }
 
 /* Regras sintáticas */
 
-programa : trecho;
+
+//programa : trecho; não esta sendo usada em momento algum
 
 trecho : (comando (';')?)* (ultimocomando (';')?)?;
 
 bloco : trecho;
 
 comando : listavar '=' listaexp |
-          chamadadefuncao |
+          /*chamadadefuncao*/ |
           'do' bloco 'end' |
           'repeat' bloco  'until' exp |
           'if' exp 'then' bloco ('elseif' exp 'then' bloco)* ('else' bloco)? 'end' |
@@ -38,9 +39,10 @@ listaexp : (exp ',')* exp;
 exp : 'nil' | 'false' | 'true' | Digito | Cadeia | '...' | funcao |
       expprefixo | construtortabela | exp opbin exp | opunaria exp;
 
-expprefixo : var | chamadadefuncao | '(' exp ')';
+expprefixo : /*var | chamadadefuncao*/ expprefixo args |
+            expprefixo ':' Identificador args | '(' exp ')'; //var aqui estava redundante (eu acho)
 
-chamadadefuncao : expprefixo args | expprefixo ':' Identificador args;
+//chamadadefuncao : expprefixo args | expprefixo ':' Identificador args; como só é usada aqui, não precisa criar uma nova regra
 
 args : '(' (listaexp)? ')' | construtortabela | Cadeia;
 
