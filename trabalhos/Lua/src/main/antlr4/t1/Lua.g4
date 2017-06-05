@@ -7,7 +7,7 @@ grammar Lua;
 /* Regras sintáticas */
 
 
-//programa : trecho; não esta sendo usada em momento algum
+programa : trecho; 
 
 trecho : (comando (';')?)* (ultimocomando (';')?)?;
 
