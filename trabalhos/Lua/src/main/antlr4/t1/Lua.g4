@@ -4,69 +4,6 @@ grammar Lua;
    public static String grupo="587265_e_595071";
 }
 
-/* Regras sintáticas */
-
-
-//programa : trecho; não esta sendo usada em momento algum
-
-trecho : (comando (';')?)* (ultimocomando (';')?)?;
-
-bloco : trecho;
-
-comando : listavar '=' listaexp |
-          /*chamadadefuncao*/ |
-          'do' bloco 'end' |
-          'repeat' bloco  'until' exp |
-          'if' exp 'then' bloco ('elseif' exp 'then' bloco)* ('else' bloco)? 'end' |
-          'for' Identificador '=' exp ',' exp (',' exp)?  'do' bloco 'end' |
-          'for' listadenomes 'in' listaexp 'do' bloco 'end' |
-          'function' nomedafuncao corpodafuncao |
-          'local' 'function' Identificador corpodafuncao |
-          'local' listadenomes ('=' listaexp)?;
-
-ultimocomando : 'return' (listaexp)? | 'break';
-
-nomedafuncao : Identificador ('.' Identificador)* (':' Identificador)?;
-
-listavar : var (',' var)*;
-
-var : Identificador | expprefixo '[' exp ']' | expprefixo '.' Identificador;
-
-listadenomes : Identificador (',' Identificador)*;
-
-listaexp : (exp ',')* exp;
-
-exp : 'nil' | 'false' | 'true' | Digito | Cadeia | '...' | funcao |
-      expprefixo | construtortabela | exp opbin exp | opunaria exp;
-
-expprefixo : /*var | chamadadefuncao*/ expprefixo args |
-            expprefixo ':' Identificador args | '(' exp ')'; //var aqui estava redundante (eu acho)
-
-//chamadadefuncao : expprefixo args | expprefixo ':' Identificador args; como só é usada aqui, não precisa criar uma nova regra
-
-args : '(' (listaexp)? ')' | construtortabela | Cadeia;
-
-funcao : 'function' corpodafuncao;
-
-corpodafuncao : '(' (listapar)? ')' bloco 'end';
-
-listapar : listadenomes (',' '...')? | '...';
-
-construtortabela : '{' (listadecampos)? '}';
-
-listadecampos : campo (separadordecampos campo)* (separadordecampos)?;
-
-campo : '[' exp ']' '=' exp | Identificador '=' exp | exp;
-
-separadordecampos : ',' | ';';
-
-opbin : '+' | '-' | '*' | '/' | '^' | '%' | '..' |
-        '<' | '<=' | '>' | '>=' | '==' | '~=' |
-        'and' | 'or';
-
-opunaria : '-' | 'not' | '#';
-
-
 /* Regras léxicas */
 
 /* Expressões regulares auxiliares para a representação de letras e dígitos. */
@@ -117,4 +54,69 @@ Comentario une ComentarioLongo e ComentarioCurto.
 skip(); indica ao analisador para ignorar o comentário. */
 fragment ComentarioCurto : '-' '-' (~('\n'))* '\n';
 fragment ComentarioLongo : '-' '-' '[' .*? ']';
-Comentario : ComentarioLongo | ComentarioCurto {skip();};
+Comentario : (ComentarioLongo | ComentarioCurto) -> skip;
+
+/* Espaços em branco devem ser ignorados */
+Brancos : [ \n\t\r]+ -> skip;
+
+
+/* Regras sintáticas */
+
+programa : trecho;
+
+trecho : (comando (';')?)* (ultimocomando (';')?)?;
+
+bloco : trecho;
+
+comando : listavar '=' listaexp |
+          /*chamadadefuncao |*/
+          'do' bloco 'end' |
+          'repeat' bloco  'until' exp |
+          'if' exp 'then' bloco ('elseif' exp 'then' bloco)* ('else' bloco)? 'end' |
+          'for' Identificador '=' exp ',' exp (',' exp)?  'do' bloco 'end' |
+          'for' listadenomes 'in' listaexp 'do' bloco 'end' |
+          'function' nomedafuncao corpodafuncao |
+          'local' 'function' Identificador corpodafuncao |
+          'local' listadenomes ('=' listaexp)?;
+
+ultimocomando : 'return' (listaexp)? | 'break';
+
+nomedafuncao : Identificador ('.' Identificador)* (':' Identificador)?;
+
+listavar : var (',' var)*;
+
+var : Identificador | expprefixo '[' exp ']' | expprefixo '.' Identificador;
+
+listadenomes : Identificador (',' Identificador)*;
+
+listaexp : (exp ',')* exp;
+
+exp : 'nil' | 'false' | 'true' | Digito | Cadeia | '...' | funcao |
+      expprefixo | construtortabela | exp opbin exp | opunaria exp;
+
+expprefixo : /*var | chamadadefuncao*/ expprefixo args |
+            expprefixo ':' Identificador args | '(' exp ')'; //var aqui estava redundante (eu acho)
+
+//chamadadefuncao : expprefixo args | expprefixo ':' Identificador args; como só é usada aqui, não precisa criar uma nova regra
+
+args : '(' (listaexp)? ')' | construtortabela | Cadeia;
+
+funcao : 'function' corpodafuncao;
+
+corpodafuncao : '(' (listapar)? ')' bloco 'end';
+
+listapar : listadenomes (',' '...')? | '...';
+
+construtortabela : '{' (listadecampos)? '}';
+
+listadecampos : campo (separadordecampos campo)* (separadordecampos)?;
+
+campo : '[' exp ']' '=' exp | Identificador '=' exp | exp;
+
+separadordecampos : ',' | ';';
+
+opbin : '+' | '-' | '*' | '/' | '^' | '%' | '..' |
+        '<' | '<=' | '>' | '>=' | '==' | '~=' |
+        'and' | 'or';
+
+opunaria : '-' | 'not' | '#';
