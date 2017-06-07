@@ -93,22 +93,24 @@ listadenomes : Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.
 
 listaexp : (exp ',')* exp;
 
-
 /* Produção das expressões com precedencia de operadores */
-exp : funcao | expprefixo | construtortabela | exp op1 fator | opunaria exp;
+exp : exp1 op7 exp | exp1;
 
-fator: fator op2 termo | termo;
+exp1 : exp2 op6 exp1 | exp2;
 
-termo: termo op3 parcela | parcela;
+exp2 : exp3 op5 exp2 | exp3;
 
-parcela: parcela op4 fator1 | fator1;
+exp3 : exp4 op4 exp3 | exp4;
 
-fator1: fator1 op5 termo1 | termo1;
+exp4 : exp5 op3 exp4 | exp5;
 
-termo1: termo1 op6 parcela1 | parcela1;
+exp5 : exp6 op2 exp5 | exp6;
 
-parcela1: 'nil' | 'false' | 'true' | Numero | Cadeia | '...';
+exp6 : opunaria exp6 | exp7;
 
+exp7 : exp8 op1 exp7 | exp8;
+
+exp8 : 'nil' | 'false' | 'true' | Numero | Cadeia | '...' | funcao | expprefixo | construtortabela;
 
 expprefixo : Identificador expprefixo_aux { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
              chamadadefuncao expprefixo_aux |
@@ -157,12 +159,13 @@ not #   - (unario)
 ^"
 */
 
-//Como os operadores unários tem mesma procedencia, não serão atribuídas prioridades a estes
+// Como os operadores unários tem mesma procedencia, não serão atribuídas prioridades a estes
 opunaria : '-' | 'not' | '#';
 
 op1: '^';
 op2: '*' | '/' | '%';
 op3: '+' | '-';
 op4: '..';
-op5: 'and';
-op6: 'or';
+op5 : '<' | '>' | '<=' | '=>' | '~=' | '==';
+op6: 'and';
+op7: 'or';
