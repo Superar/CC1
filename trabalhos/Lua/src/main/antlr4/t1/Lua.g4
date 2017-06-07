@@ -81,7 +81,7 @@ comando : listavar '=' listaexp |
 
 ultimocomando : 'return' (listaexp)? | 'break';
 
-nomedafuncao : Identificador ('.' Identificador)* (':' Identificador)? ;
+nomedafuncao : Identificador ('.' Identificador)* (':' Identificador)? { TabelaDeSimbolos.adicionarSimbolo($text,Tipo.FUNCAO); } ;
 
 listavar : var (',' var)*;
 
@@ -89,22 +89,23 @@ var : Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo
       expprefixo '[' exp ']' |
       expprefixo '.' Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); };
 
-listadenomes : Identificador (',' Identificador)* { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } ;
+listadenomes : Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } (',' Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } )* ;
 
 listaexp : (exp ',')* exp;
 
 exp : 'nil' | 'false' | 'true' | Numero | Cadeia | '...' | funcao |
       expprefixo | construtortabela | exp opbin exp | opunaria exp;
 
-expprefixo : Identificador expprefixo_aux | chamadadefuncao expprefixo_aux |
+expprefixo : Identificador expprefixo_aux { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
+             chamadadefuncao expprefixo_aux |
              '(' exp ')' expprefixo_aux;
 
 expprefixo_aux : '[' exp ']' expprefixo_aux | '.' Identificador expprefixo_aux |
                  /* epsilon */;
 
-chamadadefuncao : Identificador expprefixo_aux args chamadadefuncao_aux |
+chamadadefuncao : Identificador expprefixo_aux args chamadadefuncao_aux { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.FUNCAO); } |
                   '(' exp ')' expprefixo_aux args chamadadefuncao_aux |
-                  Identificador expprefixo_aux ':' Identificador args chamadadefuncao_aux |
+                  Identificador expprefixo_aux ':' Identificador args chamadadefuncao_aux {TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.FUNCAO); } |
                   '(' exp ')' expprefixo_aux ':' Identificador args chamadadefuncao_aux;
 
 chamadadefuncao_aux : expprefixo_aux args chamadadefuncao_aux |
