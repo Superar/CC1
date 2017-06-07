@@ -73,21 +73,23 @@ comando : listavar '=' listaexp |
           'do' bloco 'end' |
           'repeat' bloco  'until' exp |
           'if' exp 'then' bloco ('elseif' exp 'then' bloco)* ('else' bloco)? 'end' |
-          'for' Identificador '=' exp ',' exp (',' exp)?  'do' bloco 'end' |
+          'for' Identificador '=' exp ',' exp (',' exp)?  'do' bloco 'end' { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
           'for' listadenomes 'in' listaexp 'do' bloco 'end' |
           'function' nomedafuncao corpodafuncao |
-          'local' 'function' Identificador corpodafuncao |
+          'local' 'function' Identificador corpodafuncao { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.FUNCAO); } |
           'local' listadenomes ('=' listaexp)?;
 
 ultimocomando : 'return' (listaexp)? | 'break';
 
-nomedafuncao : Identificador ('.' Identificador)* (':' Identificador)?;
+nomedafuncao : Identificador ('.' Identificador)* (':' Identificador)? ;
 
 listavar : var (',' var)*;
 
-var : Identificador | expprefixo '[' exp ']' | expprefixo '.' Identificador;
+var : Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
+      expprefixo '[' exp ']' |
+      expprefixo '.' Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); };
 
-listadenomes : Identificador (',' Identificador)*;
+listadenomes : Identificador (',' Identificador)* { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } ;
 
 listaexp : (exp ',')* exp;
 
@@ -121,7 +123,9 @@ construtortabela : '{' (listadecampos)? '}';
 
 listadecampos : campo (separadordecampos campo)* (separadordecampos)?;
 
-campo : '[' exp ']' '=' exp | Identificador '=' exp | exp;
+campo : '[' exp ']' '=' exp |
+        Identificador '=' exp { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
+        exp;
 
 separadordecampos : ',' | ';';
 
