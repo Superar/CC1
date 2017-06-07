@@ -69,7 +69,7 @@ trecho : (comando (';')?)* (ultimocomando (';')?)?;
 bloco : trecho;
 
 comando : listavar '=' listaexp |
-          /*chamadadefuncao |*/
+          chamadadefuncao |
           'do' bloco 'end' |
           'repeat' bloco  'until' exp |
           'if' exp 'then' bloco ('elseif' exp 'then' bloco)* ('else' bloco)? 'end' |
@@ -91,13 +91,16 @@ listadenomes : Identificador (',' Identificador)*;
 
 listaexp : (exp ',')* exp;
 
-exp : 'nil' | 'false' | 'true' | Digito | Cadeia | '...' | funcao |
+exp : 'nil' | 'false' | 'true' | Numero | Cadeia | '...' | funcao |
       expprefixo | construtortabela | exp opbin exp | opunaria exp;
 
-expprefixo : /*var | chamadadefuncao*/ expprefixo args |
-            expprefixo ':' Identificador args | '(' exp ')'; //var aqui estava redundante (eu acho)
+expprefixo : Identificador expprefixo2 | chamadadefuncao expprefixo args expprefixo2 |
+             '(' exp ')' expprefixo2;
 
-//chamadadefuncao : expprefixo args | expprefixo ':' Identificador args; como só é usada aqui, não precisa criar uma nova regra
+expprefixo2 : '[' exp ']' expprefixo2 | '.' Identificador expprefixo2 |
+              ':' Identificador args expprefixo2 | /* epsilon */;
+
+chamadadefuncao : expprefixo args | expprefixo ':' Identificador args;
 
 args : '(' (listaexp)? ')' | construtortabela | Cadeia;
 
