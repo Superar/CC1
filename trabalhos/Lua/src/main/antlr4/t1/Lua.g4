@@ -93,8 +93,22 @@ listadenomes : Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.
 
 listaexp : (exp ',')* exp;
 
-exp : 'nil' | 'false' | 'true' | Numero | Cadeia | '...' | funcao |
-      expprefixo | construtortabela | exp opbin exp | opunaria exp;
+
+/* Produção das expressões com precedencia de operadores */
+exp : funcao | expprefixo | construtortabela | exp op1 fator | opunaria exp;
+
+fator: fator op2 termo | termo;
+
+termo: termo op3 parcela | parcela;
+
+parcela: parcela op4 fator1 | fator1;
+
+fator1: fator1 op5 termo1 | termo1;
+
+termo1: termo1 op6 parcela1 | parcela1;
+
+parcela1: 'nil' | 'false' | 'true' | Numero | Cadeia | '...';
+
 
 expprefixo : Identificador expprefixo_aux { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
              chamadadefuncao expprefixo_aux |
@@ -130,8 +144,25 @@ campo : '[' exp ']' '=' exp |
 
 separadordecampos : ',' | ';';
 
-opbin : '+' | '-' | '*' | '/' | '^' | '%' | '..' |
-        '<' | '<=' | '>' | '>=' | '==' | '~=' |
-        'and' | 'or';
+/* Precedência de Operadores
+Segundo o trecho retirado do manual de referência da linguagem:
+"A precedência de operadores em Lua segue a tabela abaixo, da menor prioridade para a maior:
+or
+and
+<   >   <=  =>  ~=  ==
+..
++   -
+*   /   %
+not #   - (unario)
+^"
+*/
 
+//Como os operadores unários tem mesma procedencia, não serão atribuídas prioridades a estes
 opunaria : '-' | 'not' | '#';
+
+op1: '^';
+op2: '*' | '/' | '%';
+op3: '+' | '-';
+op4: '..';
+op5: 'and';
+op6: 'or';
