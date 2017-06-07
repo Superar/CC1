@@ -32,7 +32,7 @@ public class Corrigir {
     // Obs: este é o mesmo método que será usado pelo professor na correção
     // A nota que você obtiver aqui será usada no cálculo de sua nota do trabalho
 
-/*    public static void main(String[] args) throws IOException, RecognitionException {
+    public static void main(String[] args) throws IOException, RecognitionException {
         File diretorioCasosTeste = new File(CAMINHO_CASOS_TESTE + "/entrada");
         File[] casosTeste = diretorioCasosTeste.listFiles();
         int totalCasosTeste = casosTeste.length;
@@ -114,5 +114,5 @@ public class Corrigir {
         } else {
             System.err.println("Gabarito gerado: "+LuaParser.grupo);
         }
-    } */
+    }
 }
