@@ -100,7 +100,14 @@ expprefixo : Identificador expprefixo_aux | chamadadefuncao expprefixo_aux |
 expprefixo_aux : '[' exp ']' expprefixo_aux | '.' Identificador expprefixo_aux |
                  /* epsilon */;
 
-chamadadefuncao : expprefixo args | expprefixo ':' Identificador args;
+chamadadefuncao : Identificador expprefixo_aux args chamadadefuncao_aux |
+                  '(' exp ')' expprefixo_aux args chamadadefuncao_aux |
+                  Identificador expprefixo_aux ':' Identificador args chamadadefuncao_aux |
+                  '(' exp ')' expprefixo_aux ':' Identificador args chamadadefuncao_aux;
+
+chamadadefuncao_aux : expprefixo_aux args chamadadefuncao_aux |
+                      expprefixo_aux ':' Identificador args chamadadefuncao_aux |
+                      /* epsilon */;
 
 args : '(' (listaexp)? ')' | construtortabela | Cadeia;
 
