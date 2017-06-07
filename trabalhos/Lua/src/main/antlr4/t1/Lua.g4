@@ -94,11 +94,11 @@ listaexp : (exp ',')* exp;
 exp : 'nil' | 'false' | 'true' | Numero | Cadeia | '...' | funcao |
       expprefixo | construtortabela | exp opbin exp | opunaria exp;
 
-expprefixo : Identificador expprefixo2 | chamadadefuncao expprefixo args expprefixo2 |
-             '(' exp ')' expprefixo2;
+expprefixo : Identificador expprefixo_aux | chamadadefuncao expprefixo_aux |
+             '(' exp ')' expprefixo_aux;
 
-expprefixo2 : '[' exp ']' expprefixo2 | '.' Identificador expprefixo2 |
-              ':' Identificador args expprefixo2 | /* epsilon */;
+expprefixo_aux : '[' exp ']' expprefixo_aux | '.' Identificador expprefixo_aux |
+                 /* epsilon */;
 
 chamadadefuncao : expprefixo args | expprefixo ':' Identificador args;
 
