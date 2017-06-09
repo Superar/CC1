@@ -4,7 +4,7 @@ grammar Lua;
    public static String grupo="587265_e_595071_e_619736";
 }
 
-/* Regras léxicas */
+/*-------------------- Regras léxicas --------------------*/
 
 /* Expressões regulares auxiliares para a representação de letras e dígitos. */
 fragment Letra : ('a'..'z'|'A'..'Z');
@@ -60,15 +60,15 @@ Comentario : (ComentarioLongo | ComentarioCurto) -> skip;
 Brancos : [ \n\t\r]+ -> skip;
 
 
-/* Regras sintáticas */
+/*-------------------- Regras sintáticas --------------------*/
 
 /* Um programa é considerado um trecho de código */
 programa : trecho;
 
-/* Por sua vez esse trecho de código pode conter ou não comandos ( existe programa sem comando?) */
+/* Por sua vez esse trecho de código pode conter 0 ou vários comandos,
+terminados ou não por ; */
 trecho : (comando (';')?)* (ultimocomando (';')?)?;
 
-/* A criação dessa regra foi utilizada para retirada de recursão esquerda ( eu acho) */
 bloco : trecho;
 
 /* Lista com todos comandos possíveis de serem executados, dentre esses contém-se:
@@ -77,7 +77,8 @@ Chamada de funções
 Execuções de comandos
 Execuções de comandos condicionais
 Execuções de comandos com laços de repetição
-Declarações de funções (?)
+Declarações de funções
+Entre outros
 */
 
 comando : listavar '=' listaexp |
@@ -91,7 +92,7 @@ comando : listavar '=' listaexp |
           'local' 'function' Identificador corpodafuncao { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.FUNCAO); } |
           'local' listadenomes ('=' listaexp)?;
 
-/* Indica o último comando do trecho, e por conseguinte do programa, é opcional. */
+/* Indica o último comando do trecho, o retorno é opcional. */
 ultimocomando : 'return' (listaexp)? | 'break';
 
 /* Definição do nome da função em conjunto com a chamada para adição da mesma, na tabela de símbolos */
@@ -108,10 +109,13 @@ listadenomes : Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.
 
 listaexp : (exp ',')* exp;
 
-/* Produção das expressões com procedência de operadores */
-/*As produções das expressões foram quebradas em várias para assim manter a procedência de operadores
-desejada conforme orientação, bem como para retirada da recursividade das regras já existentes. */
-/* A procedência de operadores segue da menor para a maior procedência. */
+/* Produção das expressões com precedência de operadores
+
+As produções das expressões foram quebradas em várias para assim manter a precedência de operadores
+desejada conforme orientação. Operadores com maior precedência são "enviados" para os níveis mais
+baixos da árvore sintática.
+
+A precedência de operadores segue da menor para a maior. */
 
 /* Operador OR */
 exp : exp1 op7 exp | exp1;
@@ -125,13 +129,13 @@ exp2 : exp3 op5 exp2 | exp3;
 /* Operador .. */
 exp3 : exp4 op4 exp3 | exp4;
 
-/* Operadores Soma/Subtração */
+/* Operadores Soma / Subtração */
 exp4 : exp5 op3 exp4 | exp5;
 
-/* Operadores Multiplicação/Divisão/Módulo */
+/* Operadores Multiplicação / Divisão / Módulo */
 exp5 : exp6 op2 exp5 | exp6;
 
-/* Operadores Unários (Não entram na precedência de Operadores, pois tem a mesma pr) */
+/* Operadores Unários */
 exp6 : opunaria exp6 | exp7;
 
 /* Operador Potência */
@@ -187,7 +191,7 @@ not #   - (unario)
 ^"
 */
 
-// Como os operadores unários tem mesma procedencia, não serão atribuídas prioridades a estes
+// Como os operadores unários têm mesma procedencia, não serão atribuídas prioridades a estes
 opunaria : '-' | 'not' | '#';
 
 op1: '^';
