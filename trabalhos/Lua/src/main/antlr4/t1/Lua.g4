@@ -1,7 +1,7 @@
 grammar Lua;
 
 @members {
-   public static String grupo="587265_e_595071";
+   public static String grupo="587265_e_595071_e_619736";
 }
 
 /* Regras léxicas */
@@ -94,9 +94,10 @@ comando : listavar '=' listaexp |
 /* Indica o último comando do trecho, e por conseguinte do programa, é opcional. */
 ultimocomando : 'return' (listaexp)? | 'break';
 
-
+/* Definição do nome da função em conjunto com a chamada para adição da mesma, na tabela de símbolos */
 nomedafuncao : Identificador ('.' Identificador)* (':' Identificador)? { TabelaDeSimbolos.adicionarSimbolo($text,Tipo.FUNCAO); } ;
 
+/* Definição da lista de variáveis separadas por vírgula */
 listavar : var (',' var)*;
 
 var : Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
