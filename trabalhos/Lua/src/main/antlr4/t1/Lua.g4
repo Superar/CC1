@@ -143,39 +143,50 @@ exp7 : exp8 op1 exp7 | exp8;
 
 exp8 : 'nil' | 'false' | 'true' | Numero | Cadeia | '...' | funcao | expprefixo | construtortabela;
 
-
+/* Definição do prefixo da expressão, com adição da variável utilizada na tabela de símbolos. */
 expprefixo : Identificador expprefixo_aux { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
              chamadadefuncao expprefixo_aux |
              '(' exp ')' expprefixo_aux;
 
+/* Definição do auxiliar do prefixo da expresão */
 expprefixo_aux : '[' exp ']' expprefixo_aux | '.' Identificador expprefixo_aux |
                  /* epsilon */;
 
+/* Definição da chamada de função, regra para realizar a chamada e seus procedimentos. */
 chamadadefuncao : Identificador expprefixo_aux args chamadadefuncao_aux { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.FUNCAO); } |
                   '(' exp ')' expprefixo_aux args chamadadefuncao_aux |
                   Identificador expprefixo_aux ':' Identificador args chamadadefuncao_aux {TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.FUNCAO); } |
                   '(' exp ')' expprefixo_aux ':' Identificador args chamadadefuncao_aux;
 
+/* Definição do auxiliar da chamada de função. */
 chamadadefuncao_aux : expprefixo_aux args chamadadefuncao_aux |
                       expprefixo_aux ':' Identificador args chamadadefuncao_aux |
                       /* epsilon */;
 
+/* Definição dos argumentos. */
 args : '(' (listaexp)? ')' | construtortabela | Cadeia;
 
+/* Definição da função. */
 funcao : 'function' corpodafuncao;
 
+/* Definição do corpo da função, que compõe a função definida acima. */
 corpodafuncao : '(' (listapar)? ')' bloco 'end';
+
 
 listapar : listadenomes (',' '...')? | '...';
 
+/* Definição do construtor de tabela. */
 construtortabela : '{' (listadecampos)? '}';
 
+/* Definição da lista de campos, com o separador de campos */
 listadecampos : campo (separadordecampos campo)* (separadordecampos)?;
 
+/* Definição de campo */
 campo : '[' exp ']' '=' exp |
         Identificador '=' exp { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
         exp;
 
+/* Definição do Separador de Campos */
 separadordecampos : ',' | ';';
 
 /* Precedência de Operadores
