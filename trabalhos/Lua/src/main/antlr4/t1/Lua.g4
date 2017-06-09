@@ -62,11 +62,23 @@ Brancos : [ \n\t\r]+ -> skip;
 
 /* Regras sintáticas */
 
+/* Um programa é considerado um trecho de código */
 programa : trecho;
 
+/* Por sua vez esse trecho de código pode conter ou não comandos ( existe programa sem comando?) */
 trecho : (comando (';')?)* (ultimocomando (';')?)?;
 
+/* A criação dessa regra foi utilizada para retirada de recursão esquerda ( eu acho) */
 bloco : trecho;
+
+/* Lista com todos comandos possíveis de serem executados, dentre esses contém-se:
+Atribuição de Variáveis
+Chamada de funções
+Execuções de comandos
+Execuções de comandos condicionais
+Execuções de comandos com laços de repetição
+Declarações de funções (?)
+*/
 
 comando : listavar '=' listaexp |
           chamadadefuncao |
@@ -79,7 +91,9 @@ comando : listavar '=' listaexp |
           'local' 'function' Identificador corpodafuncao { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.FUNCAO); } |
           'local' listadenomes ('=' listaexp)?;
 
+/* Indica o último comando do trecho, e por conseguinte do programa, é opcional. */
 ultimocomando : 'return' (listaexp)? | 'break';
+
 
 nomedafuncao : Identificador ('.' Identificador)* (':' Identificador)? { TabelaDeSimbolos.adicionarSimbolo($text,Tipo.FUNCAO); } ;
 
@@ -93,24 +107,37 @@ listadenomes : Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.
 
 listaexp : (exp ',')* exp;
 
-/* Produção das expressões com precedencia de operadores */
+/* Produção das expressões com procedência de operadores */
+/*As produções das expressões foram quebradas em várias para assim manter a procedência de operadores
+desejada conforme orientação, bem como para retirada da recursividade das regras já existentes. */
+/* A procedência de operadores segue da menor para a maior procedência. */
+
+/* Operador OR */
 exp : exp1 op7 exp | exp1;
 
+/* Operador AND */
 exp1 : exp2 op6 exp1 | exp2;
 
+/* Operadores Aritiméticos */
 exp2 : exp3 op5 exp2 | exp3;
 
+/* Operador .. */
 exp3 : exp4 op4 exp3 | exp4;
 
+/* Operadores Soma/Subtração */
 exp4 : exp5 op3 exp4 | exp5;
 
+/* Operadores Multiplicação/Divisão/Módulo */
 exp5 : exp6 op2 exp5 | exp6;
 
+/* Operadores Unários (Não entram na precedência de Operadores, pois tem a mesma pr) */
 exp6 : opunaria exp6 | exp7;
 
+/* Operador Potência */
 exp7 : exp8 op1 exp7 | exp8;
 
 exp8 : 'nil' | 'false' | 'true' | Numero | Cadeia | '...' | funcao | expprefixo | construtortabela;
+
 
 expprefixo : Identificador expprefixo_aux { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
              chamadadefuncao expprefixo_aux |
