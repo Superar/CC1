@@ -95,18 +95,21 @@ comando : listavar '=' listaexp |
 /* Indica o último comando do trecho, o retorno é opcional. */
 ultimocomando : 'return' (listaexp)? | 'break';
 
-/* Definição do nome da função em conjunto com a chamada para adição da mesma, na tabela de símbolos */
+/* Definição do nome da função em conjunto com a chamada para adição da mesma, na tabela de símbolos. */
 nomedafuncao : Identificador ('.' Identificador)* (':' Identificador)? { TabelaDeSimbolos.adicionarSimbolo($text,Tipo.FUNCAO); } ;
 
 /* Definição da lista de variáveis separadas por vírgula */
 listavar : var (',' var)*;
 
+/* Definição de variável em conjunto com a chamada para adição na tablea de símbolos. */
 var : Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
       expprefixo '[' exp ']' |
       expprefixo '.' Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); };
 
+/* Definição da lista de nomes, com chamada para adição na tabela de símbolos. */
 listadenomes : Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } (',' Identificador { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } )* ;
 
+/* Definição da lista de expressões. */
 listaexp : (exp ',')* exp;
 
 /* Produção das expressões com precedência de operadores
