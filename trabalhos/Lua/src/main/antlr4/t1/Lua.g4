@@ -146,12 +146,28 @@ exp7 : exp8 op1 exp7 | exp8;
 
 exp8 : 'nil' | 'false' | 'true' | Numero | Cadeia | '...' | funcao | expprefixo | construtortabela;
 
+/*Regras originalmente recursivas à esquerda:
+
+    var : Identificador | expprefixo '[' exp ']' | expprefixo '.' Identificador;
+
+    expprefixo : var | chamadadefuncao | '(' exp ')';
+
+    chamadadefuncao expprefixo args | expprefixo ':' Identificador args;
+
+A recursividade foi retirada segundo o algoritmo apresentado no site:
+    http://www.csd.uwo.ca/~moreno/CS447/Lectures/Syntax.html/node8.html
+Primeiramente, substituiu-se todas as produções de var em expprefixo.
+Após isso retirou-se a recursividade à esquerda de expprefixo conforme o algoritmo apresentado em aula.
+O mesmo procedimento foi realizado com expprefixo e chamadadefuncao.s
+*/
+
 /* Definição do prefixo da expressão, com adição da variável utilizada na tabela de símbolos. */
 expprefixo : Identificador expprefixo_aux { TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.VARIAVEL); } |
              chamadadefuncao expprefixo_aux |
              '(' exp ')' expprefixo_aux;
 
-/* Definição do auxiliar do prefixo da expresão */
+/* Definição do auxiliar do prefixo da expresão. Esta expressão foi criada para a eliminação
+da recursividade à esquerda da regra expprefixo. */
 expprefixo_aux : '[' exp ']' expprefixo_aux | '.' Identificador expprefixo_aux |
                  /* epsilon */;
 
@@ -161,7 +177,8 @@ chamadadefuncao : Identificador expprefixo_aux args chamadadefuncao_aux { Tabela
                   Identificador expprefixo_aux ':' Identificador args chamadadefuncao_aux {TabelaDeSimbolos.adicionarSimbolo($Identificador.text,Tipo.FUNCAO); } |
                   '(' exp ')' expprefixo_aux ':' Identificador args chamadadefuncao_aux;
 
-/* Definição do auxiliar da chamada de função. */
+/* Definição do auxiliar da chamada de função. Esta expressão foi criada para a eliminação
+da recursividade à esquerda da regra chamadadefuncao. */
 chamadadefuncao_aux : expprefixo_aux args chamadadefuncao_aux |
                       expprefixo_aux ':' Identificador args chamadadefuncao_aux |
                       /* epsilon */;
