@@ -17,17 +17,19 @@ trecho : (comando ';'?)* (ultimocomando ';'?)?
 bloco : trecho
       ;
 
-comando :  listavar '=' listaexp 
+// Foram adicionados nomes para os comandos do tipo "for", para identifica-los no Listener
+// Tambem foi adicionada o identificador varLocal para uma lista de variaveis locais
+comando :  listavar '=' listaexp
         |  chamadadefuncao
         |  'do' bloco 'end'
         |  'while' exp 'do' bloco 'end'
         |  'repeat' bloco 'until' exp
         |  'if' exp 'then' bloco ('elseif' exp 'then' bloco)* ('else' bloco)? 'end'
-        |  'for' NOME '=' exp ',' exp (',' exp)? 'do' bloco 'end'
-        |  'for' listadenomes 'in' listaexp 'do' bloco 'end'
+        |  for1='for' NOME '=' exp ',' exp (',' exp)? 'do' blocoFor1=bloco 'end'
+        |  for2='for' listadenomes 'in' listaexp 'do' blocoFor2=bloco 'end'
         |  'function' nomedafuncao corpodafuncao 
         |  'local' 'function' NOME corpodafuncao 
-        |  'local' listadenomes ('=' listaexp)?
+        |  varLocal='local' listadenomes ('=' listaexp)?
         ;
 
 ultimocomando : 'return' (listaexp)? | 'break'

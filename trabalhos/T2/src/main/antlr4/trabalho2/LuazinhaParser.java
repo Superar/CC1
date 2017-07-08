@@ -274,6 +274,11 @@ public class LuazinhaParser extends Parser {
 	}
 
 	public static class ComandoContext extends ParserRuleContext {
+		public Token for1;
+		public BlocoContext blocoFor1;
+		public Token for2;
+		public BlocoContext blocoFor2;
+		public Token varLocal;
 		public ListavarContext listavar() {
 			return getRuleContext(ListavarContext.class,0);
 		}
@@ -435,7 +440,7 @@ public class LuazinhaParser extends Parser {
 				enterOuterAlt(_localctx, 7);
 				{
 				setState(107);
-				match(T__11);
+				((ComandoContext)_localctx).for1 = match(T__11);
 				setState(108);
 				match(NOME);
 				setState(109);
@@ -461,7 +466,7 @@ public class LuazinhaParser extends Parser {
 				setState(117);
 				match(T__2);
 				setState(118);
-				bloco();
+				((ComandoContext)_localctx).blocoFor1 = bloco();
 				setState(119);
 				match(T__3);
 				}
@@ -470,7 +475,7 @@ public class LuazinhaParser extends Parser {
 				enterOuterAlt(_localctx, 8);
 				{
 				setState(121);
-				match(T__11);
+				((ComandoContext)_localctx).for2 = match(T__11);
 				setState(122);
 				listadenomes();
 				setState(123);
@@ -480,7 +485,7 @@ public class LuazinhaParser extends Parser {
 				setState(125);
 				match(T__2);
 				setState(126);
-				bloco();
+				((ComandoContext)_localctx).blocoFor2 = bloco();
 				setState(127);
 				match(T__3);
 				}
@@ -513,7 +518,7 @@ public class LuazinhaParser extends Parser {
 				enterOuterAlt(_localctx, 11);
 				{
 				setState(137);
-				match(T__15);
+				((ComandoContext)_localctx).varLocal = match(T__15);
 				setState(138);
 				listadenomes();
 				setState(141);

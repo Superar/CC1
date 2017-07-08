@@ -58,7 +58,36 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             }
         }
 
-        // TODO: Adicionar escopo para comandor de loop 'for'
+        // O comando eh um loop do tipo for
+        else if (ctx.for1 != null || ctx.for2 != null)
+        {
+            TabelaDeSimbolos escopoFor = new TabelaDeSimbolos("for");
+            escopos.empilhar(escopoFor);
+
+            // for1
+            if (ctx.for1 != null)
+            {
+                if (!escopos.topo().existeSimbolo(ctx.NOME().getText()))
+                {
+                    escopos.topo().adicionarSimbolo(ctx.NOME().getText(), "variavel");
+                }
+                enterBloco(ctx.blocoFor1);
+            }
+            // for2
+            else
+            {
+                for (String nome : ctx.listadenomes().nomes)
+                {
+                    if (!escopos.topo().existeSimbolo(nome))
+                    {
+                        escopos.topo().adicionarSimbolo(nome, "variavel");
+                    }
+                }
+                enterBloco(ctx.blocoFor2);
+            }
+
+            escopos.desempilhar();
+        }
 
         // Existe uma funcao sendo declarada
         else if (ctx.corpodafuncao() != null)
