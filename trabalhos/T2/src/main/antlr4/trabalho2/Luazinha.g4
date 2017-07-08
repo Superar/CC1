@@ -117,7 +117,7 @@ NUMERO	:	('0'..'9')+ EXPOENTE? | ('0'..'9')+ '.' ('0'..'9')* EXPOENTE?
 fragment
 EXPOENTE	:	('e' | 'E') ( '+' | '-')? ('0'..'9')+;
 
-// Adicionado skip para antlr ignorar espaços em branco e comentários
+// Adicionado skip para antlr ignorar espacos em branco e comentarios
 COMENTARIO
 	:	'--' ~('\n' | '\r')* '\r'? '\n' {skip();} -> skip;
 WS	:	(' ' | '\t' | '\r' | '\n') {skip();} -> skip;

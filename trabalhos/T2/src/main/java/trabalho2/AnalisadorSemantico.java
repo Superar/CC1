@@ -58,6 +58,8 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             }
         }
 
+        // TODO: Adicionar escopo para comandor de loop 'for'
+
         // Existe uma funcao sendo declarada
         else if (ctx.corpodafuncao() != null)
         {
@@ -82,6 +84,28 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
     @Override
     public void enterCorpodafuncao(LuazinhaParser.CorpodafuncaoContext ctx)
     {
+        // Funcao possui parametros que devem ser inseridos na tabela de simbolos
+        if (ctx.listapar() != null)
+        {
+            enterListapar(ctx.listapar());
+        }
+
         enterBloco(ctx.bloco());
+    }
+
+    @Override
+    public void enterListapar(LuazinhaParser.ListaparContext ctx)
+    {
+        // Se existirem parametros no formato de nomes, serao inseridos a tabela
+        if (ctx.listadenomes() != null)
+        {
+            for (String nome : ctx.listadenomes().nomes)
+            {
+                if (!escopos.topo().existeSimbolo(nome))
+                {
+                    escopos.topo().adicionarSimbolo(nome, "parametro");
+                }
+            }
+        }
     }
 }
