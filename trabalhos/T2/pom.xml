@@ -8,10 +8,6 @@
     <artifactId>trabalho2</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <properties>
-        <antlr4.visitor>true</antlr4.visitor>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.antlr</groupId>

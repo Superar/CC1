@@ -34,7 +34,10 @@ public class TestaAnalisadorSemantico {
             LuazinhaLexer lexer = new LuazinhaLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             LuazinhaParser parser = new LuazinhaParser(tokens);
-            parser.programa();
+            // Passagem da árvore sintática para o analisador semântico
+            LuazinhaParser.ProgramaContext arvore = parser.programa();
+            AnalisadorSemantico analisador = new AnalisadorSemantico();
+            analisador.enterPrograma(arvore);
             InputStream casoDeTesteSaida = TestaAnalisadorSemantico.class.getResourceAsStream("../saida/" + nomeArquivo);
             comparar(nomeArquivo, casoDeTesteSaida, Saida.getTexto());
         }

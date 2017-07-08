@@ -7,9 +7,8 @@ PilhaDeTabelas pilhaDeTabelas = new PilhaDeTabelas();
 }
 
 
-programa : { pilhaDeTabelas.empilhar(new TabelaDeSimbolos("global")); }
-           trecho
-           { pilhaDeTabelas.desempilhar(); }
+// Empilhamento do escopo global movido para Listener AnalisadorSemantico
+programa : trecho
          ;
 
 trecho : (comando ';'?)* (ultimocomando ';'?)?
@@ -117,6 +116,8 @@ NUMERO	:	('0'..'9')+ EXPOENTE? | ('0'..'9')+ '.' ('0'..'9')* EXPOENTE?
 		| '.' ('0'..'9')+ EXPOENTE?;
 fragment
 EXPOENTE	:	('e' | 'E') ( '+' | '-')? ('0'..'9')+;
+
+// Adicionado skip para antlr ignorar espaços em branco e comentários
 COMENTARIO
 	:	'--' ~('\n' | '\r')* '\r'? '\n' {skip();} -> skip;
 WS	:	(' ' | '\t' | '\r' | '\n') {skip();} -> skip;
