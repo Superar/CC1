@@ -29,13 +29,13 @@ public class TestaAnalisadorSemantico {
         for (int i = min; i <= max; i++) {
             Saida.clear();
             String nomeArquivo = String.format("casoDeTeste%02d.txt", i);
-            InputStream casoDeTesteEntrada = TestaAnalisadorSemantico.class.getResourceAsStream("casosDeTeste/entrada/" + nomeArquivo);
+            InputStream casoDeTesteEntrada = TestaAnalisadorSemantico.class.getResourceAsStream("../entrada/" + nomeArquivo);
             ANTLRInputStream input = new ANTLRInputStream(casoDeTesteEntrada);
             LuazinhaLexer lexer = new LuazinhaLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             LuazinhaParser parser = new LuazinhaParser(tokens);
             parser.programa();
-            InputStream casoDeTesteSaida = TestaAnalisadorSemantico.class.getResourceAsStream("casosDeTeste/saida/" + nomeArquivo);
+            InputStream casoDeTesteSaida = TestaAnalisadorSemantico.class.getResourceAsStream("../saida/" + nomeArquivo);
             comparar(nomeArquivo, casoDeTesteSaida, Saida.getTexto());
         }
     }
