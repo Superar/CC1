@@ -48,13 +48,9 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
         if (ctx.listavar() != null)
         {
             // Adiciona todas as variáveis em listavar como variaveis
-            for (String nome : ctx.listavar().nomes)
+            if (!escopos.topo().existeSimbolo(ctx.listavar().nomes))
             {
-                // Variavel so e criada se nao existir
-                if (!escopos.topo().existeSimbolo(nome))
-                {
-                    escopos.topo().adicionarSimbolo(nome, "variavel");
-                }
+                escopos.topo().adicionarSimbolos(ctx.listavar().nomes, "variavel");
             }
         }
 
@@ -76,12 +72,9 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             // for2
             else
             {
-                for (String nome : ctx.listadenomes().nomes)
+                if (!escopos.topo().existeSimbolo(ctx.listadenomes().nomes))
                 {
-                    if (!escopos.topo().existeSimbolo(nome))
-                    {
-                        escopos.topo().adicionarSimbolo(nome, "variavel");
-                    }
+                    escopos.topo().adicionarSimbolos(ctx.listadenomes().nomes, "variavel");
                 }
                 enterBloco(ctx.blocoFor2);
             }
@@ -128,12 +121,9 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
         // Se existirem parametros no formato de nomes, serao inseridos a tabela
         if (ctx.listadenomes() != null)
         {
-            for (String nome : ctx.listadenomes().nomes)
+            if (!escopos.topo().existeSimbolo(ctx.listadenomes().nomes))
             {
-                if (!escopos.topo().existeSimbolo(nome))
-                {
-                    escopos.topo().adicionarSimbolo(nome, "parametro");
-                }
+                escopos.topo().adicionarSimbolos(ctx.listadenomes().nomes, "parametro");
             }
         }
     }
