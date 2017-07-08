@@ -10,11 +10,11 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
     @Override
     public void enterPrograma(LuazinhaParser.ProgramaContext ctx)
     {
-        // Escopo global é empilhado e analisador entra em Trecho
+        // Escopo global e empilhado e analisador entra em Trecho
         TabelaDeSimbolos escopoGlobal = new TabelaDeSimbolos("global");
         escopos.empilhar(escopoGlobal);
         enterTrecho(ctx.trecho());
-        // Ao terminar o programa, o escopo global é desempilhado
+        // Ao terminar o programa, o escopo global e desempilhado
         escopos.desempilhar();
     }
 
@@ -27,7 +27,7 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             enterComando(comando);
         }
 
-        // ultimocomando é opcional, verifica se está presente
+        // ultimocomando e opcional, verifica se esta presente
         if (ctx.ultimocomando() != null)
         {
             enterUltimocomando(ctx.ultimocomando());
@@ -43,10 +43,25 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
     @Override
     public void enterComando(LuazinhaParser.ComandoContext ctx)
     {
-        // Existe uma função sendo declarada
-        if (ctx.corpodafuncao() != null)
+
+        // Existem variaveis sendo atribuidas
+        if (ctx.listavar() != null)
         {
-            // Cria o escopo da função
+            // Adiciona todas as variáveis em listavar como variaveis
+            for (String nome : ctx.listavar().nomes)
+            {
+                // Variavel so e criada se nao existir
+                if (!escopos.topo().existeSimbolo(nome))
+                {
+                    escopos.topo().adicionarSimbolo(nome, "variavel");
+                }
+            }
+        }
+
+        // Existe uma funcao sendo declarada
+        else if (ctx.corpodafuncao() != null)
+        {
+            // Cria o escopo da funcao
             TabelaDeSimbolos escopoFuncao;
             // Verifica qual nome deve ser utilizado
             if (ctx.nomedafuncao() != null)
@@ -59,7 +74,7 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             }
             escopos.empilhar(escopoFuncao);
             enterCorpodafuncao(ctx.corpodafuncao());
-            // Ao se terminar a função, o escopo é desempilhado
+            // Ao se terminar a funcao, o escopo e desempilhado
             escopos.desempilhar();
         }
     }

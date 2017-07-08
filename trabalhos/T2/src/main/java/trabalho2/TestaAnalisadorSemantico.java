@@ -15,7 +15,7 @@ public class TestaAnalisadorSemantico {
     private final static int TOTAL_CASOS_TESTE = 22;
     // Especifique abaixo qual caso de teste deseja
     // testar. Utilize 0 para testar todos
-    private final static int CASO_A_SER_TESTADO = 2;
+    private final static int CASO_A_SER_TESTADO = 4;
 
     public static void main(String[] args) throws Exception {
         int min = 1, max = TOTAL_CASOS_TESTE;
