@@ -274,6 +274,7 @@ public class LuazinhaParser extends Parser {
 	}
 
 	public static class ComandoContext extends ParserRuleContext {
+		public BlocoContext blocoRepeat;
 		public Token for1;
 		public BlocoContext blocoFor1;
 		public Token for2;
@@ -382,7 +383,7 @@ public class LuazinhaParser extends Parser {
 				setState(82);
 				match(T__5);
 				setState(83);
-				bloco();
+				((ComandoContext)_localctx).blocoRepeat = bloco();
 				setState(84);
 				match(T__6);
 				setState(85);

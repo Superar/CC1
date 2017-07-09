@@ -73,22 +73,13 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             // for1
             if (ctx.for1 != null)
             {
-                if (!escopos.existeSimbolo(ctx.NOME().getText()))
-                {
-                    escopos.topo().adicionarSimbolo(ctx.NOME().getText(), "variavel");
-                }
+                escopos.topo().adicionarSimbolo(ctx.NOME().getText(), "variavel");
                 enterBloco(ctx.blocoFor1);
             }
             // for2
             else
             {
-                for (String nome : ctx.listadenomes().nomes)
-                {
-                    if (!escopos.existeSimbolo(nome))
-                    {
-                        escopos.topo().adicionarSimbolo(nome, "variavel");
-                    }
-                }
+                escopos.topo().adicionarSimbolos(ctx.listadenomes().nomes, "variavel");
                 enterBloco(ctx.blocoFor2);
             }
 
