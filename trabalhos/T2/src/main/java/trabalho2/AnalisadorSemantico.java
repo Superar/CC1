@@ -51,7 +51,7 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             for (String nome : ctx.listavar().nomes)
             {
                 // Variavel so e criada se nao existir
-                if (!escopos.topo().existeSimbolo(nome))
+                if (!escopos.existeSimbolo(nome))
                 {
                     escopos.topo().adicionarSimbolo(nome, "variavel");
                 }
@@ -67,7 +67,7 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             // for1
             if (ctx.for1 != null)
             {
-                if (!escopos.topo().existeSimbolo(ctx.NOME().getText()))
+                if (!escopos.existeSimbolo(ctx.NOME().getText()))
                 {
                     escopos.topo().adicionarSimbolo(ctx.NOME().getText(), "variavel");
                 }
@@ -78,7 +78,7 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             {
                 for (String nome : ctx.listadenomes().nomes)
                 {
-                    if (!escopos.topo().existeSimbolo(nome))
+                    if (!escopos.existeSimbolo(nome))
                     {
                         escopos.topo().adicionarSimbolo(nome, "variavel");
                     }
