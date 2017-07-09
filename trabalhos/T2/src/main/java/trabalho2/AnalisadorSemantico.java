@@ -58,6 +58,12 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             }
         }
 
+        // O comando e uma estrutura do tipo repeat
+        if (ctx.blocoRepeat != null)
+        {
+            enterBloco(ctx.blocoRepeat);
+        }
+
         // O comando eh um loop do tipo for
         else if (ctx.for1 != null || ctx.for2 != null)
         {
@@ -107,6 +113,11 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             enterCorpodafuncao(ctx.corpodafuncao());
             // Ao se terminar a funcao, o escopo e desempilhado
             escopos.desempilhar();
+        }
+
+        else if (ctx.varLocal != null)
+        {
+            escopos.topo().adicionarSimbolos(ctx.listadenomes().nomes, "variavel");
         }
     }
 
