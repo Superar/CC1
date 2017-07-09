@@ -38,19 +38,6 @@ public class TabelaDeSimbolos {
         }
         return false;
     }
-
-    // Verifica se existem simbolos de uma lista na tabela
-    public boolean existeSimbolo(List<String> nomes)
-    {
-        for (String s : nomes)
-        {
-            if(this.existeSimbolo(s))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
     
     @Override
     public String toString() {
