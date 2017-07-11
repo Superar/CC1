@@ -274,10 +274,10 @@ public class LuazinhaParser extends Parser {
 	}
 
 	public static class ComandoContext extends ParserRuleContext {
-		public Token whileToken;
 		public ExpContext expWhile;
 		public BlocoContext blocoWhile;
 		public BlocoContext blocoRepeat;
+		public ExpContext expRepeat;
 		public ExpContext expIf;
 		public BlocoContext blocoIf;
 		public ExpContext exp;
@@ -376,7 +376,7 @@ public class LuazinhaParser extends Parser {
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(76);
-				((ComandoContext)_localctx).whileToken = match(T__4);
+				match(T__4);
 				setState(77);
 				((ComandoContext)_localctx).expWhile = exp(0);
 				setState(78);
@@ -397,7 +397,7 @@ public class LuazinhaParser extends Parser {
 				setState(84);
 				match(T__6);
 				setState(85);
-				exp(0);
+				((ComandoContext)_localctx).expRepeat = exp(0);
 				}
 				break;
 			case 6:
