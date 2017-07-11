@@ -105,7 +105,7 @@ public class LuazinhaParser extends Parser {
 
 	public LuazinhaParser(TokenStream input) {
 		super(input);
-		_interp = new ParserATNfimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
+		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class ProgramaContext extends ParserRuleContext {
 		public TrechoContext trecho() {
@@ -274,7 +274,17 @@ public class LuazinhaParser extends Parser {
 	}
 
 	public static class ComandoContext extends ParserRuleContext {
+		public Token whileToken;
+		public ExpContext expWhile;
+		public BlocoContext blocoWhile;
 		public BlocoContext blocoRepeat;
+		public ExpContext expIf;
+		public BlocoContext blocoIf;
+		public ExpContext exp;
+		public List<ExpContext> expElseIf = new ArrayList<ExpContext>();
+		public BlocoContext bloco;
+		public List<BlocoContext> blocoElseIf = new ArrayList<BlocoContext>();
+		public BlocoContext blocoElse;
 		public Token for1;
 		public BlocoContext blocoFor1;
 		public Token for2;
@@ -366,13 +376,13 @@ public class LuazinhaParser extends Parser {
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(76);
-				match(T__4);
+				((ComandoContext)_localctx).whileToken = match(T__4);
 				setState(77);
-				exp(0);
+				((ComandoContext)_localctx).expWhile = exp(0);
 				setState(78);
 				match(T__2);
 				setState(79);
-				bloco();
+				((ComandoContext)_localctx).blocoWhile = bloco();
 				setState(80);
 				match(T__3);
 				}
@@ -396,11 +406,11 @@ public class LuazinhaParser extends Parser {
 				setState(87);
 				match(T__7);
 				setState(88);
-				exp(0);
+				((ComandoContext)_localctx).expIf = exp(0);
 				setState(89);
 				match(T__8);
 				setState(90);
-				bloco();
+				((ComandoContext)_localctx).blocoIf = bloco();
 				setState(98);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
@@ -410,11 +420,13 @@ public class LuazinhaParser extends Parser {
 					setState(91);
 					match(T__9);
 					setState(92);
-					exp(0);
+					((ComandoContext)_localctx).exp = exp(0);
+					((ComandoContext)_localctx).expElseIf.add(((ComandoContext)_localctx).exp);
 					setState(93);
 					match(T__8);
 					setState(94);
-					bloco();
+					((ComandoContext)_localctx).bloco = bloco();
+					((ComandoContext)_localctx).blocoElseIf.add(((ComandoContext)_localctx).bloco);
 					}
 					}
 					setState(100);
@@ -429,7 +441,7 @@ public class LuazinhaParser extends Parser {
 					setState(101);
 					match(T__10);
 					setState(102);
-					bloco();
+					((ComandoContext)_localctx).blocoElse = bloco();
 					}
 				}
 
@@ -901,6 +913,9 @@ public class LuazinhaParser extends Parser {
 	}
 
 	public static class ListaexpContext extends ParserRuleContext {
+		public ExpContext exp;
+		public List<ExpContext> listaExp = new ArrayList<ExpContext>();
+		public ExpContext ultimaExp;
 		public List<ExpContext> exp() {
 			return getRuleContexts(ExpContext.class);
 		}
@@ -936,7 +951,8 @@ public class LuazinhaParser extends Parser {
 					{
 					{
 					setState(201);
-					exp(0);
+					((ListaexpContext)_localctx).exp = exp(0);
+					((ListaexpContext)_localctx).listaExp.add(((ListaexpContext)_localctx).exp);
 					setState(202);
 					match(T__12);
 					}
@@ -947,7 +963,7 @@ public class LuazinhaParser extends Parser {
 				_alt = getInterpreter().adaptivePredict(_input,16,_ctx);
 			}
 			setState(209);
-			exp(0);
+			((ListaexpContext)_localctx).ultimaExp = exp(0);
 			}
 		}
 		catch (RecognitionException re) {
@@ -962,6 +978,8 @@ public class LuazinhaParser extends Parser {
 	}
 
 	public static class ExpContext extends ParserRuleContext {
+		public ExpContext opbinExp1;
+		public ExpContext opBinExp2;
 		public TerminalNode NUMERO() { return getToken(LuazinhaParser.NUMERO, 0); }
 		public TerminalNode CADEIA() { return getToken(LuazinhaParser.CADEIA, 0); }
 		public FuncaoContext funcao() {
@@ -1096,13 +1114,15 @@ public class LuazinhaParser extends Parser {
 					{
 					{
 					_localctx = new ExpContext(_parentctx, _parentState);
+					_localctx.opbinExp1 = _prevctx;
+					_localctx.opbinExp1 = _prevctx;
 					pushNewRecursionContext(_localctx, _startState, RULE_exp);
 					setState(226);
 					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
 					setState(227);
 					opbin();
 					setState(228);
-					exp(3);
+					((ExpContext)_localctx).opBinExp2 = exp(3);
 					}
 					} 
 				}

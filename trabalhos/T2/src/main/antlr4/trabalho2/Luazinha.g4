@@ -2,7 +2,7 @@ grammar Luazinha;
 
 
 @members{
-static String grupo = "587265";
+static String grupo = "587265, 595071";
 PilhaDeTabelas pilhaDeTabelas = new PilhaDeTabelas();
 }
 
@@ -19,14 +19,15 @@ bloco : trecho
 
 // Foram adicionados nomes para os comandos do tipo "for", para identifica-los no Listener
 // Tambem foi adicionada o identificador varLocal para uma lista de variaveis locais
-// Foi adicionado um identificador para o bloco condicional (if/else)
-// Foi adicionado um identificador para o bloco dentro da estrutura de repeat, para que seja possível visitá-lo
+// Foi adicionado identificadores para blocos de repeticao do tipo while
+// Foi adicionado identificadores para o bloco condicional (if/else)
+// Foi adicionado um identificador para o bloco dentro da estrutura de repeat
 comando :  listavar '=' listaexp
         |  chamadadefuncao
         |  'do' bloco 'end'
-        |  'while' exp 'do' bloco 'end'
+        |  whileToken='while' expWhile=exp 'do' blocoWhile=bloco 'end'
         |  'repeat' blocoRepeat=bloco 'until' exp
-        |  if='if' exp 'then' bloco ('elseif' exp 'then' bloco)* ('else' bloco)? 'end'
+        |  'if' expIf=exp 'then' blocoIf=bloco ('elseif' expElseIf+=exp 'then' blocoElseIf+=bloco)* ('else' blocoElse=bloco)? 'end'
         |  for1='for' NOME '=' exp ',' exp (',' exp)? 'do' blocoFor1=bloco 'end'
         |  for2='for' listadenomes 'in' listaexp 'do' blocoFor2=bloco 'end'
         |  'function' nomedafuncao corpodafuncao 
@@ -46,12 +47,11 @@ nomedafuncao returns [ String nome, boolean metodo ]
 
 listavar returns [ List<String> nomes ]
 @init { $nomes = new ArrayList<String>(); }
-    : v1=var [false] { $nomes.add($v1.nome); }
-      (',' v2+=var [false] { $nomes.add($v2.nome); }
+    : v1=var { $nomes.add($v1.nome); }
+      (',' v2=var { $nomes.add($v2.nome); }
       )*
     ;
 
-//Adicao da variavel amarrada para a verificacao de declaracoes anteriores
 var returns [ String nome, int linha, int coluna ]
     :  NOME { $nome = $NOME.getText(); $linha = $NOME.line; $coluna = $NOME.pos; } 
     |  expprefixo '[' exp ']'
@@ -64,19 +64,20 @@ listadenomes returns [ List<String> nomes ]
       (',' n2=NOME { $nomes.add($n2.getText()); } )*
     ;
 
-listaexp : (exp ',')* exp
+// Adicao de nomes para a lista de expressoes e a ultima expressao
+listaexp : (listaExp+=exp ',')* ultimaExp=exp
          ;
 
+// Adicao de nomes para as expressoes relativas a opbin
 exp :  'nil' | 'false' | 'true' | NUMERO | CADEIA | '...' | funcao | 
-       expprefixo2 | construtortabela | exp opbin exp | opunaria exp 
+       expprefixo2 | construtortabela | opbinExp1=exp opbin opBinExp2=exp | opunaria exp
     ;
 
 
 expprefixo : NOME ( '[' exp ']' | '.' NOME )*
            ;
 
-//identificadores para facilitar a visitacao de algumas variaveis
-expprefixo2 : var1=var | chamadadefuncao | '(' indicepar=exp ')'
+expprefixo2 : var | chamadadefuncao | '(' exp ')'
            ;
 
 chamadadefuncao :  expprefixo args |

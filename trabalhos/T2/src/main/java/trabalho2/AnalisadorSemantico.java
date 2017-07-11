@@ -3,10 +3,10 @@ package trabalho2;
 /**
  * Created by marcio on 08/07/17.
  */
+
 public class AnalisadorSemantico extends LuazinhaBaseListener
 {
     PilhaDeTabelas escopos = new PilhaDeTabelas();
-    Mensagens mensagem = new Mensagens();
 
     @Override
     public void enterPrograma(LuazinhaParser.ProgramaContext ctx)
@@ -48,21 +48,60 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
         // Existem variaveis sendo atribuidas
         if (ctx.listavar() != null)
         {
+            // Verifica o lado direito da atribuicao primeiro
+            // Pois uma variavel pode estar sendo utilizada em sua propria atribuicao
+            enterListaexp(ctx.listaexp());
+
             // Adiciona todas as variáveis em listavar como variaveis
             for (String nome : ctx.listavar().nomes)
             {
                 // Variavel so e criada se nao existir
                 if (!escopos.existeSimbolo(nome))
                 {
-                    enterListavar(ctx.listavar());
+                    escopos.topo().adicionarSimbolo(nome, "variavel");
                 }
             }
+        }
+
+        // O comando eh uma chamada de funcao
+        if (ctx.chamadadefuncao() != null)
+        {
+            enterChamadadefuncao(ctx.chamadadefuncao());
+        }
+
+        // O comando eh um bloco de repeticao while
+        if (ctx.whileToken != null)
+        {
+            enterExp(ctx.expWhile);
+            enterBloco(ctx.blocoWhile);
         }
 
         // O comando e uma estrutura do tipo repeat
         if (ctx.blocoRepeat != null)
         {
             enterBloco(ctx.blocoRepeat);
+        }
+
+        // O comando eh um bloco condicional (if)
+        if (ctx.expIf != null)
+        {
+            enterExp(ctx.expIf);
+            enterBloco(ctx.blocoIf);
+
+            for (LuazinhaParser.ExpContext exp : ctx.expElseIf)
+            {
+                enterExp(exp);
+            }
+
+            for (LuazinhaParser.BlocoContext bloco : ctx.blocoElseIf)
+            {
+                enterBloco(bloco);
+            }
+
+            if (ctx.blocoElse != null)
+            {
+                enterBloco(ctx.blocoElse);
+            }
         }
 
         // O comando eh um loop do tipo for
@@ -96,8 +135,7 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             if (ctx.nomedafuncao() != null)
             {
                 escopoFuncao = new TabelaDeSimbolos(ctx.nomedafuncao().nome);
-            }
-            else
+            } else
             {
                 escopoFuncao = new TabelaDeSimbolos(ctx.NOME().getText());
             }
@@ -110,8 +148,10 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
         else if (ctx.varLocal != null)
         {
             escopos.topo().adicionarSimbolos(ctx.listadenomes().nomes, "variavel");
+            enterListaexp(ctx.listaexp());
         }
     }
+
 
     @Override
     public void enterCorpodafuncao(LuazinhaParser.CorpodafuncaoContext ctx)
@@ -141,43 +181,84 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
         }
     }
 
+    // Lista de expressoes do lado direito da atribuicao de variaveis
     @Override
-    public void enterVar(LuazinhaParser.VarContext ctx)
+    public void enterListaexp(LuazinhaParser.ListaexpContext ctx)
     {
-        if (ctx.NOME() != null)
+        // Entra em todas as expressoes da lista
+        for (LuazinhaParser.ExpContext exp : ctx.listaExp)
         {
-            TabelaDeSimbolos curr = escopos.topo();
-            if (!escopos.existeSimbolo(ctx.nome))
-            {
-                if (!(ctx.getRuleIndex() == 6))
-                {
-                    curr.adicionarSimbolo(ctx.nome, "variavel");
-                }
-                else
-                {
-                    mensagem.erroVariavelNaoExiste(ctx.linha, ctx.coluna, ctx.nome);
-                }
-            }
+            enterExp(exp);
+        }
+
+        // Entra na ultima expressao
+        if (ctx.ultimaExp != null)
+        {
+            enterExp(ctx.ultimaExp);
         }
     }
 
     @Override
-    public void enterListavar(LuazinhaParser.ListavarContext ctx)
+    public void enterExp(LuazinhaParser.ExpContext ctx)
     {
-        if (ctx.nomes != null)
+        // Verifica se existe expprefixo2, isto eh, uma variavel do lado direito da atribuicao
+        if (ctx.expprefixo2() != null)
         {
-            int i = 0;
-            // Faz a verificacao de amarracao das variaveis da lista
-            // Se uma variavel nao esta declarada, ela pode ser declarada ou entao
-            // uma variavel nao amarrada
-            for (String nome : ctx.nomes)
+            enterExpprefixo2(ctx.expprefixo2());
+        }
+
+        // A regra exp opbin exp foi reconhecida
+        if (ctx.opbin() != null)
+        {
+            enterExp(ctx.opbinExp1);
+            enterExp(ctx.opBinExp2);
+        }
+    }
+
+    @Override
+    public void enterExpprefixo2(LuazinhaParser.Expprefixo2Context ctx)
+    {
+        // A variavel do lado direito da atribuicao existe
+        if (ctx.var() != null)
+        {
+            // Se nao esta no esocpo, uma mensagem de erro deve ser mostrada
+            LuazinhaParser.VarContext var = ctx.var();
+            if (!escopos.existeSimbolo(var.nome))
             {
-                if (!escopos.existeSimbolo(nome))
-                {
-                    enterVar(ctx.var(i));
-                }
-                i++;
+                Mensagens.erroVariavelNaoExiste(var.linha, var.coluna, var.nome);
             }
+        }
+
+        if (ctx.chamadadefuncao() != null)
+        {
+            enterChamadadefuncao(ctx.chamadadefuncao());
+        }
+    }
+
+    @Override
+    public void enterChamadadefuncao(LuazinhaParser.ChamadadefuncaoContext ctx)
+    {
+        if (ctx.args() != null)
+        {
+            enterArgs(ctx.args());
+        }
+    }
+
+    @Override
+    public void enterArgs(LuazinhaParser.ArgsContext ctx)
+    {
+        if (ctx.listaexp() != null)
+        {
+            enterListaexp(ctx.listaexp());
+        }
+    }
+
+    @Override
+    public void enterUltimocomando(LuazinhaParser.UltimocomandoContext ctx)
+    {
+        if (ctx.listaexp() != null)
+        {
+            enterListaexp(ctx.listaexp());
         }
     }
 }
