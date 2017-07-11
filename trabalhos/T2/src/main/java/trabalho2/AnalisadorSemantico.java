@@ -6,6 +6,7 @@ package trabalho2;
 public class AnalisadorSemantico extends LuazinhaBaseListener
 {
     PilhaDeTabelas escopos = new PilhaDeTabelas();
+    Mensagens mensagem = new Mensagens();
 
     @Override
     public void enterPrograma(LuazinhaParser.ProgramaContext ctx)
@@ -53,7 +54,7 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
                 // Variavel so e criada se nao existir
                 if (!escopos.existeSimbolo(nome))
                 {
-                    escopos.topo().adicionarSimbolo(nome, "variavel");
+                    enterListavar(ctx.listavar());
                 }
             }
         }
@@ -139,4 +140,45 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             }
         }
     }
+
+    @Override
+    public void enterVar(LuazinhaParser.VarContext ctx)
+    {
+        if (ctx.NOME() != null)
+        {
+            TabelaDeSimbolos curr = escopos.topo();
+            if (!escopos.existeSimbolo(ctx.nome))
+            {
+                if (!(ctx.getRuleIndex() == 6))
+                {
+                    curr.adicionarSimbolo(ctx.nome, "variavel");
+                }
+                else
+                {
+                    mensagem.erroVariavelNaoExiste(ctx.linha, ctx.coluna, ctx.nome);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void enterListavar(LuazinhaParser.ListavarContext ctx)
+    {
+        if (ctx.nomes != null)
+        {
+            int i = 0;
+            // Faz a verificacao de amarracao das variaveis da lista
+            // Se uma variavel nao esta declarada, ela pode ser declarada ou entao
+            // uma variavel nao amarrada
+            for (String nome : ctx.nomes)
+            {
+                if (!escopos.existeSimbolo(nome))
+                {
+                    enterVar(ctx.var(i));
+                }
+                i++;
+            }
+        }
+    }
 }
+

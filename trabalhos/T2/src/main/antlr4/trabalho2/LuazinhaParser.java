@@ -100,12 +100,12 @@ public class LuazinhaParser extends Parser {
 	public ATN getATN() { return _ATN; }
 
 
-	static String grupo = "587265";
+	static String grupo = "587265, 595071";
 	PilhaDeTabelas pilhaDeTabelas = new PilhaDeTabelas();
 
 	public LuazinhaParser(TokenStream input) {
 		super(input);
-		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
+		_interp = new ParserATNfimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class ProgramaContext extends ParserRuleContext {
 		public TrechoContext trecho() {
