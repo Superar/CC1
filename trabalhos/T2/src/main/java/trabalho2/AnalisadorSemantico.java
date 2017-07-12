@@ -44,14 +44,14 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
         enterTrecho(ctx.trecho());
     }
 
-    /* comando :  listavar '=' listaexp
+    /* comando :  f '=' listaexp
         |  chamadadefuncao
         |  'do' bloco 'end'
         |  whileToken='while' expWhile=exp 'do' blocoWhile=bloco 'end'
         |  'repeat' blocoRepeat=bloco 'until' exp
         |  'if' expIf=exp 'then' blocoIf=bloco ('elseif' expElseIf+=exp 'then' blocoElseIf+=bloco)* ('else' blocoElse=bloco)? 'end'
         |  for1='for' NOME '=' exp ',' exp (',' exp)? 'do' blocoFor1=bloco 'end'
-        |  for2='for' listadenomes 'in' listaexp 'do' blocoFor2=bloco 'end'
+        |  for2='for' listadenomes 'in' listaexpFor2=listaexp 'do' blocoFor2=bloco 'end'
         |  'function' nomedafuncao corpodafuncao
         |  'local' 'function' NOME corpodafuncao
         |  varLocal='local' listadenomes ('=' listaexp)?
@@ -144,11 +144,20 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             if (ctx.for1 != null)
             {
                 escopos.topo().adicionarSimbolo(ctx.NOME().getText(), "variavel");
+                enterExp(ctx.expFor1);
+                enterExp(ctx.exp2For1);
+
+                if (ctx.exp3For1 != null)
+                {
+                    enterExp(ctx.exp3For1);
+                }
+
                 enterBloco(ctx.blocoFor1);
             }
             // for2
             else
             {
+                enterListaexp(ctx.listaexp());
                 escopos.topo().adicionarSimbolos(ctx.listadenomes().nomes, "variavel");
                 enterBloco(ctx.blocoFor2);
             }
@@ -169,11 +178,19 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             if (ctx.nomedafuncao() != null)
             {
                 escopoFuncao = new TabelaDeSimbolos(ctx.nomedafuncao().nome);
-            } else
+                escopos.empilhar(escopoFuncao);
+
+                if (ctx.nomedafuncao().n3 != null)
+                {
+                    escopos.topo().adicionarSimbolo("self", "parametro");
+                }
+            }
+            else
             {
                 escopoFuncao = new TabelaDeSimbolos(ctx.NOME().getText());
+                escopos.empilhar(escopoFuncao);
             }
-            escopos.empilhar(escopoFuncao);
+
 
             // corpodafuncao
             enterCorpodafuncao(ctx.corpodafuncao());
@@ -238,6 +255,8 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             enterExp(exp);
         }
 
+        //
+
         // ultimaExp=exp
         // Entra na ultima expressao
         if (ctx.ultimaExp != null)
@@ -252,17 +271,17 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
     @Override
     public void enterExp(LuazinhaParser.ExpContext ctx)
     {
-        // expprefixo2
-        if (ctx.expprefixo2() != null)
-        {
-            enterExpprefixo2(ctx.expprefixo2());
-        }
-
         // opbinExp1=exp opbin opBinExp2=exp
         if (ctx.opbin() != null)
         {
             enterExp(ctx.opbinExp1);
             enterExp(ctx.opBinExp2);
+        }
+
+        // expprefixo2
+        if (ctx.expprefixo2() != null)
+        {
+            enterExpprefixo2(ctx.expprefixo2());
         }
     }
 
@@ -273,12 +292,9 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
         // var
         if (ctx.var() != null)
         {
-            LuazinhaParser.VarContext var = ctx.var();
-
-            // Se nao esta no esocpo, uma mensagem de erro deve ser mostrada
-            if (!escopos.existeSimbolo(var.nome))
+            if (!escopos.existeSimbolo(ctx.var().nome))
             {
-                Mensagens.erroVariavelNaoExiste(var.linha, var.coluna, var.nome);
+                Mensagens.erroVariavelNaoExiste(ctx.var().linha, ctx.var().coluna, ctx.var().nome);
             }
         }
 
@@ -327,6 +343,15 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
         if (ctx.listaexp() != null)
         {
             enterListaexp(ctx.listaexp());
+        }
+    }
+
+    @Override
+    public void enterVar(LuazinhaParser.VarContext ctx)
+    {
+        if(!escopos.existeSimbolo(ctx.nome))
+        {
+            Mensagens.erroVariavelNaoExiste(ctx.linha, ctx.coluna, ctx.nome);
         }
     }
 }

@@ -28,8 +28,8 @@ comando :  listavar '=' listaexp
         |  'while' expWhile=exp 'do' blocoWhile=bloco 'end'
         |  'repeat' blocoRepeat=bloco 'until' expRepeat=exp
         |  'if' expIf=exp 'then' blocoIf=bloco ('elseif' expElseIf+=exp 'then' blocoElseIf+=bloco)* ('else' blocoElse=bloco)? 'end'
-        |  for1='for' NOME '=' exp ',' exp (',' exp)? 'do' blocoFor1=bloco 'end'
-        |  for2='for' listadenomes 'in' listaexp 'do' blocoFor2=bloco 'end'
+        |  for1='for' NOME '=' expFor1=exp ',' exp2For1=exp (',' exp3For1=exp)? 'do' blocoFor1=bloco 'end'
+        |  for2='for' listadenomes 'in' listaexpFor2=listaexp 'do' blocoFor2=bloco 'end'
         |  'function' nomedafuncao corpodafuncao 
         |  'local' 'function' NOME corpodafuncao
         |  varLocal='local' listadenomes ('=' listaexp)?

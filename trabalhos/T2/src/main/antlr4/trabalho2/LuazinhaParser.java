@@ -286,8 +286,12 @@ public class LuazinhaParser extends Parser {
 		public List<BlocoContext> blocoElseIf = new ArrayList<BlocoContext>();
 		public BlocoContext blocoElse;
 		public Token for1;
+		public ExpContext expFor1;
+		public ExpContext exp2For1;
+		public ExpContext exp3For1;
 		public BlocoContext blocoFor1;
 		public Token for2;
+		public ListaexpContext listaexpFor2;
 		public BlocoContext blocoFor2;
 		public Token varLocal;
 		public ListavarContext listavar() {
@@ -459,11 +463,11 @@ public class LuazinhaParser extends Parser {
 				setState(109);
 				match(T__1);
 				setState(110);
-				exp(0);
+				((ComandoContext)_localctx).expFor1 = exp(0);
 				setState(111);
 				match(T__12);
 				setState(112);
-				exp(0);
+				((ComandoContext)_localctx).exp2For1 = exp(0);
 				setState(115);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
@@ -472,7 +476,7 @@ public class LuazinhaParser extends Parser {
 					setState(113);
 					match(T__12);
 					setState(114);
-					exp(0);
+					((ComandoContext)_localctx).exp3For1 = exp(0);
 					}
 				}
 
@@ -494,7 +498,7 @@ public class LuazinhaParser extends Parser {
 				setState(123);
 				match(T__13);
 				setState(124);
-				listaexp();
+				((ComandoContext)_localctx).listaexpFor2 = listaexp();
 				setState(125);
 				match(T__2);
 				setState(126);
