@@ -51,7 +51,7 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
         |  'repeat' blocoRepeat=bloco 'until' exp
         |  'if' expIf=exp 'then' blocoIf=bloco ('elseif' expElseIf+=exp 'then' blocoElseIf+=bloco)* ('else' blocoElse=bloco)? 'end'
         |  for1='for' NOME '=' exp ',' exp (',' exp)? 'do' blocoFor1=bloco 'end'
-        |  for2='for' listadenomes 'in' listaexpFor2=listaexp 'do' blocoFor2=bloco 'end'
+        |  for2='for' listadenomes 'in' listaexp 'do' blocoFor2=bloco 'end'
         |  'function' nomedafuncao corpodafuncao
         |  'local' 'function' NOME corpodafuncao
         |  varLocal='local' listadenomes ('=' listaexp)?
@@ -163,6 +163,8 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             // for2
             else
             {
+                // Eh preciso entrar primeiramente em listaexp para o caso de uma variavel ser atribuida com ela mesma
+                // exemplo: for i in i
                 enterListaexp(ctx.listaexp());
                 escopos.topo().adicionarSimbolos(ctx.listadenomes().nomes, "variavel");
                 enterBloco(ctx.blocoFor2);
@@ -190,13 +192,11 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
                 // Se o nome da funcao possui ':', cria-se o parametro self
                 if (ctx.nomedafuncao().n3 != null)
                 {
-                    // Empilha o escopo da funcao, convertendo ':' para '.'
                     escopos.topo().adicionarSimbolo("self", "parametro");
                 }
             }
             else
             {
-                // Caso contrario, ha apenas o empilhamento dos parametros explicitos da funcao
                 escopoFuncao = new TabelaDeSimbolos(ctx.NOME().getText());
                 escopos.empilhar(escopoFuncao);
             }
@@ -353,16 +353,6 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
         if (ctx.listaexp() != null)
         {
             enterListaexp(ctx.listaexp());
-        }
-    }
-
-    @Override
-    public void enterVar(LuazinhaParser.VarContext ctx)
-    {
-        // Verificacao de amarracao da variavel, caso ela nao esteja amarrada, exibe-se um erro
-        if(!escopos.existeSimbolo(ctx.nome))
-        {
-            Mensagens.erroVariavelNaoExiste(ctx.linha, ctx.coluna, ctx.nome);
         }
     }
 }

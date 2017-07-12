@@ -291,7 +291,6 @@ public class LuazinhaParser extends Parser {
 		public ExpContext exp3For1;
 		public BlocoContext blocoFor1;
 		public Token for2;
-		public ListaexpContext listaexpFor2;
 		public BlocoContext blocoFor2;
 		public Token varLocal;
 		public ListavarContext listavar() {
@@ -498,7 +497,7 @@ public class LuazinhaParser extends Parser {
 				setState(123);
 				match(T__13);
 				setState(124);
-				((ComandoContext)_localctx).listaexpFor2 = listaexp();
+				listaexp();
 				setState(125);
 				match(T__2);
 				setState(126);
