@@ -131,7 +131,7 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             }
         }
 
-        // for1='for' NOME '=' exp ',' exp (',' exp)? 'do' blocoFor1=bloco 'end'
+        // for1='for' NOME '=' expFor1=exp ',' exp2For1=exp (',' exp3For1=exp)? 'do' blocoFor1=bloco 'end'
         // for2='for' listadenomes 'in' listaexp 'do' blocoFor2=bloco 'end'
         // O comando eh um loop do tipo for
         else if (ctx.for1 != null || ctx.for2 != null)
@@ -143,10 +143,16 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
             // for1
             if (ctx.for1 != null)
             {
+
                 escopos.topo().adicionarSimbolo(ctx.NOME().getText(), "variavel");
+
+                // expFor1=exp
                 enterExp(ctx.expFor1);
+
+                // exp2For1=exp
                 enterExp(ctx.exp2For1);
 
+                // (',' exp3For1=exp)?
                 if (ctx.exp3For1 != null)
                 {
                     enterExp(ctx.exp3For1);
@@ -180,13 +186,17 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
                 escopoFuncao = new TabelaDeSimbolos(ctx.nomedafuncao().nome);
                 escopos.empilhar(escopoFuncao);
 
+                // 'function' nomedafuncao corpodafuncao
+                // Se o nome da funcao possui ':', cria-se o parametro self
                 if (ctx.nomedafuncao().n3 != null)
                 {
+                    // Empilha o escopo da funcao, convertendo ':' para '.'
                     escopos.topo().adicionarSimbolo("self", "parametro");
                 }
             }
             else
             {
+                // Caso contrario, ha apenas o empilhamento dos parametros explicitos da funcao
                 escopoFuncao = new TabelaDeSimbolos(ctx.NOME().getText());
                 escopos.empilhar(escopoFuncao);
             }
@@ -349,6 +359,7 @@ public class AnalisadorSemantico extends LuazinhaBaseListener
     @Override
     public void enterVar(LuazinhaParser.VarContext ctx)
     {
+        // Verificacao de amarracao da variavel, caso ela nao esteja amarrada, exibe-se um erro
         if(!escopos.existeSimbolo(ctx.nome))
         {
             Mensagens.erroVariavelNaoExiste(ctx.linha, ctx.coluna, ctx.nome);

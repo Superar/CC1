@@ -22,6 +22,7 @@ bloco : trecho
 // Foi adicionado identificadores para blocos de repeticao do tipo while
 // Foi adicionado identificadores para o bloco condicional (if/else)
 // Foi adicionado um identificador para o bloco dentro da estrutura de repeat
+// Foi adicionado identificadores para as expressoes do For1
 comando :  listavar '=' listaexp
         |  chamadadefuncao
         |  'do' bloco 'end'
@@ -29,7 +30,7 @@ comando :  listavar '=' listaexp
         |  'repeat' blocoRepeat=bloco 'until' expRepeat=exp
         |  'if' expIf=exp 'then' blocoIf=bloco ('elseif' expElseIf+=exp 'then' blocoElseIf+=bloco)* ('else' blocoElse=bloco)? 'end'
         |  for1='for' NOME '=' expFor1=exp ',' exp2For1=exp (',' exp3For1=exp)? 'do' blocoFor1=bloco 'end'
-        |  for2='for' listadenomes 'in' listaexpFor2=listaexp 'do' blocoFor2=bloco 'end'
+        |  for2='for' listadenomes 'in' listaexp 'do' blocoFor2=bloco 'end'
         |  'function' nomedafuncao corpodafuncao 
         |  'local' 'function' NOME corpodafuncao
         |  varLocal='local' listadenomes ('=' listaexp)?
